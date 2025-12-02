@@ -1,0 +1,40 @@
+Feature Report
+
+This document outlines the main features of the Genio Tech application.
+
+## 1. User Authentication and Roles
+- **Static User with Role:** The application starts with a default user with an 'Owner' role, providing full access.
+- **Role-Based Permissions:** The application has a role-based permission system that can be configured to show or hide certain features based on the user's role.
+- **Team Management:** An 'Owner' can view a list of all users in the 'Team' view.
+- **Role Administration:** An 'Owner' can change the role of other users from the 'Team' view.
+
+## 2. Dashboard
+- **Key Metrics:** The dashboard provides an at-a-glance overview of key business metrics, including:
+  - Today's Revenue
+  - Number of Active Students
+  - Number of Completed Sessions
+- **Dynamic Date Display:** The dashboard shows the current date.
+
+## 3. Enrollment Management
+- **New Student Enrollment:** A dedicated 'Enroll' view allows for the registration of new students into available courses.
+- **Active Classes:** The 'Active Classes' view displays a list of all currently active student sessions.
+- **Session Completion:** From the 'Active Classes' view, a session can be marked as 'completed'.
+- **Enrollment History:** The 'History' view provides a comprehensive list of all past and present enrollments.
+- **Search Functionality:** The history view includes a search bar to easily find specific students or courses.
+- **Record Deletion:** Authorized users can delete enrollment records from the history view.
+
+## 4. Course Management
+- **Course Listing:** The 'Courses' view displays a list of all available courses.
+- **Add New Courses:** New courses can be added to the system from the 'Courses' view.
+- **Remove Courses:** Existing courses can be removed from the system.
+
+## 5. Student Profiles
+- **Detailed Profile View:** A dedicated profile page is available for each student, providing a centralized view of their information.
+- **Profile Information:** The profile page displays the student's name, email, and a complete history of their enrollments.
+- **Easy Access:** Student profiles can be accessed by clicking on a student's name in the 'Active Classes' or 'History' views.
+
+## 6. Real-time Updates
+- **Live Data Synchronization:** The application is connected to the Firestore database in real-time. Any changes made to the data (e.g., a new enrollment, a completed session) are instantly reflected across all open sessions of the application without the need to reload the page.
+
+## 7. Database Seeding
+- **Development Tool:** A 'Seed Database' button is available as a development tool to populate the Firestore database with sample data for testing and demonstration purposes.

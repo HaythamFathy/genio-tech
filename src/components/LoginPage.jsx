@@ -1,74 +1,145 @@
 import React, { useState } from 'react';
-import { User, Lock, ArrowRight, GraduationCap } from 'lucide-react';
-import { ROLES } from '../constants';
+import { useAuth } from '../contexts/AuthContext';
+import { auth, db } from '../firebase';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { setDoc, doc } from 'firebase/firestore';
+import { ROLES } from '../constants'; // Import ROLES
 
-const LoginPage = ({ onLogin }) => {
-  const [selectedRole, setSelectedRole] = useState(ROLES.OWNER);
+const LoginPage = () => {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState(ROLES.INSTRUCTOR); // Add role state with a default value
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
 
-  const onSubmit = (e) => {
+  const handleSignIn = async (e) => {
     e.preventDefault();
+    setError('');
     setLoading(true);
-    setTimeout(() => {
-      onLogin(selectedRole, password);
+    if (!email || !password) {
+      setError('Please enter both email and password.');
       setLoading(false);
-    }, 800);
+      return;
+    }
+    try {
+      await login(email, password);
+    } catch (err) {
+      setError(err.message);
+      console.error("Error signing in:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    if (!email || !password) {
+      setError('Please enter both email and password.');
+      setLoading(false);
+      return;
+    }
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      
+      // Create a document in the 'users' collection
+      await setDoc(doc(db, 'users', user.uid), {
+        uid: user.uid,
+        email: user.email,
+        role: role, // Use the selected role
+      });
+
+    } catch (err) {
+      setError(err.message);
+      console.error("Error signing up:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
-      <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-purple-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-pink-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-
-      <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden z-10">
-        <div className="p-8 pb-0 text-center">
-          <div className="w-20 h-20 bg-gradient-to-tr from-purple-600 to-pink-500 rounded-2xl mx-auto flex items-center justify-center shadow-lg mb-6 transform rotate-3">
-            <GraduationCap className="text-white w-10 h-10" />
-          </div>
-          <h1 className="text-3xl font-bold text-slate-800">Genio Tech</h1>
-          <p className="text-slate-500 mt-2">Management Portal</p>
-        </div>
-
-        <form onSubmit={onSubmit} className="p-8 space-y-6">
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-slate-600 ml-1">Select Role</label>
-            <div className="relative">
-              <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
-              <select 
-                className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none appearance-none font-medium text-slate-700"
-                value={selectedRole}
-                onChange={(e) => setSelectedRole(e.target.value)}
-              >
-                {Object.values(ROLES).map(role => (
-                  <option key={role} value={role}>{role}</option>
-                ))}
-              </select>
-            </div>
+    <div className="flex items-center justify-center min-h-screen bg-slate-100">
+      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold text-center text-primary">Genio Tech</h2>
+        <form className="space-y-6">
+          <div>
+            <label htmlFor="email" className="text-sm font-medium text-slate-700">
+              Email Address
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-3 py-2 mt-1 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+            />
           </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-slate-600 ml-1">Password</label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
-              <input 
-                type="password" 
-                className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none transition-all"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
+          <div>
+            <label
+              htmlFor="password"
+              className="text-sm font-medium text-slate-700"
+            >
+              Password
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-3 py-2 mt-1 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+            />
           </div>
 
-          <button 
-            type="submit" 
-            disabled={loading}
-            className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 group disabled:opacity-70"
-          >
-            {loading ? 'Authenticating...' : 'Sign In'}
-            {!loading && <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />}
-          </button>
+          <div>
+            <label htmlFor="role" className="text-sm font-medium text-slate-700">
+              Role
+            </label>
+            <select
+              id="role"
+              name="role"
+              required
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="w-full px-3 py-2 mt-1 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+            >
+              {Object.values(ROLES).map((r) => (
+                <option key={r} value={r}>
+                  {r}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {error && <p className="text-sm text-status-overdue">{error}</p>}
+
+          <div className="flex flex-col space-y-4">
+            <button
+              type="submit"
+              onClick={handleSignIn}
+              disabled={loading}
+              className="w-full px-4 py-2 font-medium text-white bg-primary rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:bg-primary/50"
+            >
+              {loading ? 'Signing In...' : 'Sign In'}
+            </button>
+            <button
+              type="button"
+              onClick={handleSignUp}
+              disabled={loading}
+              className="w-full px-4 py-2 font-medium text-secondary bg-transparent border border-secondary rounded-md hover:bg-secondary/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary disabled:opacity-50"
+            >
+              {loading ? 'Signing Up...' : 'Sign Up'}
+            </button>
+          </div>
         </form>
       </div>
     </div>

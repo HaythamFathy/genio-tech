@@ -2,13 +2,17 @@ import React, { useState } from 'react';
 import { Trash2 } from 'lucide-react';
 
 const CoursesView = ({ courses, addCourse, removeCourse }) => {
-  const [newCourse, setNewCourse] = useState({ name: '', price: '', category: 'Coding' });
+  const [newCourse, setNewCourse] = useState({ name: '', level: 'Beginner', price: '', duration: '' });
 
   const handleAdd = (e) => {
     e.preventDefault();
-    if (!newCourse.name || !newCourse.price) return;
-    addCourse({ ...newCourse, price: parseFloat(newCourse.price) });
-    setNewCourse({ name: '', price: '', category: 'Coding' });
+    if (!newCourse.name || !newCourse.price || !newCourse.level || !newCourse.duration) return;
+    addCourse({ 
+      ...newCourse, 
+      price: parseFloat(newCourse.price),
+      duration: parseFloat(newCourse.duration)
+    });
+    setNewCourse({ name: '', level: 'Beginner', price: '', duration: '' });
   };
 
   return (
@@ -30,15 +34,18 @@ const CoursesView = ({ courses, addCourse, removeCourse }) => {
                 value={newCourse.price} onChange={e => setNewCourse({...newCourse, price: e.target.value})} placeholder="0.00" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-600 mb-1">Category</label>
+              <label className="block text-sm font-medium text-slate-600 mb-1">Level</label>
               <select className="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
-                  value={newCourse.category} onChange={e => setNewCourse({...newCourse, category: e.target.value})}>
-                  <option value="Coding">Coding</option>
-                  <option value="Engineering">Engineering</option>
-                  <option value="Electronics">Electronics</option>
-                  <option value="Design">Design</option>
-                  <option value="Math">Math</option>
+                  value={newCourse.level} onChange={e => setNewCourse({...newCourse, level: e.target.value})}>
+                  <option value="Beginner">Beginner</option>
+                  <option value="Intermediate">Intermediate</option>
+                  <option value="Advanced">Advanced</option>
               </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-600 mb-1">Duration (hours)</label>
+              <input required type="number" className="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
+                value={newCourse.duration} onChange={e => setNewCourse({...newCourse, duration: e.target.value})} placeholder="e.g. 20" />
             </div>
             <button type="submit" className="w-full py-3 bg-slate-800 hover:bg-slate-900 text-white rounded-lg font-medium transition-colors">
               Add to Catalog
@@ -53,7 +60,7 @@ const CoursesView = ({ courses, addCourse, removeCourse }) => {
               <div key={c.id} className="p-4 flex justify-between items-center hover:bg-slate-50">
                 <div>
                   <div className="font-medium text-slate-900">{c.name}</div>
-                  <div className="text-xs text-slate-400">{c.category}</div>
+                  <div className="text-xs text-slate-400">{c.level} - {c.duration} hours</div>
                 </div>
                 <div className="flex items-center gap-4">
                   <span className="font-bold text-slate-700">EGP {c.price.toLocaleString()}</span>

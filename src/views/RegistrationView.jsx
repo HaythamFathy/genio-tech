@@ -1,28 +1,45 @@
 import React, { useState } from 'react';
 
 const RegistrationView = ({ courses, addEnrollment }) => {
-  const [form, setForm] = useState({ studentName: '', gradeLevel: '', parentPhone: '', courseId: '' });
+  const [form, setForm] = useState({ 
+    studentName: '', 
+    age: '', 
+    phoneNumber: '', 
+    parentName: '', 
+    courseId: '',
+    paymentStatus: 'Pending' // Default to Pending
+  });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const course = courses.find(c => c.id === parseInt(form.courseId));
     if (!course) return;
 
-    addEnrollment({
-      studentName: form.studentName,
-      gradeLevel: form.gradeLevel,
-      parentPhone: form.parentPhone,
+    const studentData = {
+      name: form.studentName,
+      age: parseInt(form.age),
+      phoneNumber: form.phoneNumber,
+      parentName: form.parentName,
+      paymentStatus: form.paymentStatus, // Include payment status
+    };
+
+    const enrollmentDetails = {
+      courseId: course.id,
       courseName: course.name,
-      price: course.price
-    });
-    setForm({ studentName: '', gradeLevel: '', parentPhone: '', courseId: '' });
+      price: course.price,
+      courseLevel: course.level, 
+      courseDuration: course.duration, 
+    };
+
+    await addEnrollment(studentData, enrollmentDetails);
+    setForm({ studentName: '', age: '', phoneNumber: '', parentName: '', courseId: '', paymentStatus: 'Pending' });
     alert("Student Registered Successfully!");
   };
 
   return (
     <div className="max-w-2xl mx-auto animate-fade-in">
       <h1 className="text-3xl font-bold text-slate-800 mb-6">Register Student</h1>
-      <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-8">
+      <div className="bg-white rounded-lg border border-gray-100 p-6">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -31,16 +48,23 @@ const RegistrationView = ({ courses, addEnrollment }) => {
                 value={form.studentName} onChange={e => setForm({...form, studentName: e.target.value})} placeholder="e.g. Alex Johnson" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Parent Phone</label>
-              <input type="tel" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none" 
-                value={form.parentPhone} onChange={e => setForm({...form, parentPhone: e.target.value})} placeholder="Optional" />
+              <label className="block text-sm font-medium text-slate-700 mb-2">Age</label>
+              <input required type="number" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none" 
+                value={form.age} onChange={e => setForm({...form, age: e.target.value})} placeholder="e.g. 10" />
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">Grade Level / Age</label>
-            <input required type="text" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none" 
-              value={form.gradeLevel} onChange={e => setForm({...form, gradeLevel: e.target.value})} placeholder="e.g. Grade 5, 10 years old" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">Phone Number</label>
+              <input type="tel" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none" 
+                value={form.phoneNumber} onChange={e => setForm({...form, phoneNumber: e.target.value})} placeholder="Optional" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">Parent Name</label>
+              <input type="text" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none" 
+                value={form.parentName} onChange={e => setForm({...form, parentName: e.target.value})} placeholder="Optional" />
+            </div>
           </div>
 
           <div>
@@ -54,7 +78,46 @@ const RegistrationView = ({ courses, addEnrollment }) => {
             </select>
           </div>
 
-          <button type="submit" className="w-full py-4 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow-lg shadow-purple-200 transition-all transform hover:scale-[1.02]">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-2">Payment Status</label>
+            <div className="mt-2 flex space-x-4">
+              <label className="inline-flex items-center">
+                <input
+                  type="radio"
+                  className="form-radio text-purple-600"
+                  name="paymentStatus"
+                  value="Paid 50%"
+                  checked={form.paymentStatus === 'Paid 50%'}
+                  onChange={e => setForm({...form, paymentStatus: e.target.value})}
+                />
+                <span className="ml-2 text-slate-700">Paid 50%</span>
+              </label>
+              <label className="inline-flex items-center">
+                <input
+                  type="radio"
+                  className="form-radio text-purple-600"
+                  name="paymentStatus"
+                  value="Paid Full"
+                  checked={form.paymentStatus === 'Paid Full'}
+                  onChange={e => setForm({...form, paymentStatus: e.target.value})}
+                />
+                <span className="ml-2 text-slate-700">Paid Full</span>
+              </label>
+              <label className="inline-flex items-center">
+                <input
+                  type="radio"
+                  className="form-radio text-purple-600"
+                  name="paymentStatus"
+                  value="Pending"
+                  checked={form.paymentStatus === 'Pending'}
+                  onChange={e => setForm({...form, paymentStatus: e.target.value})}
+                />
+                <span className="ml-2 text-slate-700">Pending</span>
+              </label>
+            </div>
+          </div>
+
+          <button type="submit" className="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-md transition-all">
             Confirm Enrollment
           </button>
         </form>

@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
-import { Search, Trash2 } from 'lucide-react';
+import { Trash2, Download } from 'lucide-react'; // Import Download icon
+import { Link } from 'react-router-dom';
 import { ROLES } from '../constants';
+import SearchBar from '../components/SearchBar';
+import { exportHistoryToPDF } from '../utils'; // Import the export function
 
 const HistoryView = ({ enrollments, deleteEnrollment, user }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -14,15 +17,20 @@ const HistoryView = ({ enrollments, deleteEnrollment, user }) => {
     <div className="animate-fade-in">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <h1 className="text-3xl font-bold text-slate-800">Student History</h1>
-        <div className="relative w-full md:w-64">
-           <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
-           <input 
-             type="text" 
-             placeholder="Search..." 
-             className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
-             value={searchTerm}
-             onChange={e => setSearchTerm(e.target.value)}
-           />
+        <div className="flex items-center gap-4"> {/* Added a flex container for the button and search bar */}
+          <button 
+            onClick={() => exportHistoryToPDF(filtered)} 
+            className="inline-flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-dark text-white font-medium rounded-md transition-colors text-sm"
+          >
+            <Download size={16} /> Download Report
+          </button>
+          <div className="w-full md:w-64">
+            <SearchBar 
+              placeholder="Search..." 
+              value={searchTerm}
+              onSearch={setSearchTerm}
+            />
+          </div>
         </div>
       </div>
 
@@ -50,7 +58,11 @@ const HistoryView = ({ enrollments, deleteEnrollment, user }) => {
                     <td className="p-4 text-slate-500 text-sm">
                       {new Date(item.date).toLocaleDateString()}
                     </td>
-                    <td className="p-4 font-medium text-slate-900">{item.studentName}</td>
+                    <td className="p-4 font-medium text-slate-900">
+                      <Link to={`/student/${item.studentEmail}`} className="hover:text-purple-600 transition-colors">
+                        {item.studentName}
+                      </Link>
+                    </td>
                     <td className="p-4 text-slate-600">{item.gradeLevel}</td>
                     <td className="p-4 text-slate-600">{item.courseName}</td>
                     <td className="p-4 text-right font-medium text-slate-800">EGP {item.price.toLocaleString()}</td>
