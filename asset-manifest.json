@@ -1,10 +1,19 @@
 {
   "files": {
-    "main.js": "/genio-tech/static/js/main.dc22bd01.js",
+    "main.css": "/genio-tech/static/css/main.b8299168.css",
+    "main.js": "/genio-tech/static/js/main.937d8b2a.js",
+    "static/js/239.e98a4f06.chunk.js": "/genio-tech/static/js/239.e98a4f06.chunk.js",
+    "static/js/977.cfa72e76.chunk.js": "/genio-tech/static/js/977.cfa72e76.chunk.js",
+    "static/js/455.025a368c.chunk.js": "/genio-tech/static/js/455.025a368c.chunk.js",
     "index.html": "/genio-tech/index.html",
-    "main.dc22bd01.js.map": "/genio-tech/static/js/main.dc22bd01.js.map"
+    "main.b8299168.css.map": "/genio-tech/static/css/main.b8299168.css.map",
+    "main.937d8b2a.js.map": "/genio-tech/static/js/main.937d8b2a.js.map",
+    "239.e98a4f06.chunk.js.map": "/genio-tech/static/js/239.e98a4f06.chunk.js.map",
+    "977.cfa72e76.chunk.js.map": "/genio-tech/static/js/977.cfa72e76.chunk.js.map",
+    "455.025a368c.chunk.js.map": "/genio-tech/static/js/455.025a368c.chunk.js.map"
   },
   "entrypoints": [
-    "static/js/main.dc22bd01.js"
+    "static/css/main.b8299168.css",
+    "static/js/main.937d8b2a.js"
   ]
 }
